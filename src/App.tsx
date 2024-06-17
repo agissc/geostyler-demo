@@ -1,26 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-import {
-  Switch,
-  Button,
-  Form,
-  notification,
-  Radio
-} from 'antd';
+import { Switch, Button, Form, notification, Radio } from "antd";
 
-import {
-  Style as GsStyle
-} from 'geostyler-style';
+import { Style as GsStyle } from "geostyler-style";
 
-import {
-  Data as GsData
-} from 'geostyler-data';
+import { Data as GsData } from "geostyler-data";
 
-import GeoJsonParser from 'geostyler-geojson-parser';
-import SldStyleParser from 'geostyler-sld-parser';
-import MapboxStyleParser from 'geostyler-mapbox-parser';
-import ShapefileParser from 'geostyler-shapefile-parser';
-import WfsParser from 'geostyler-wfs-parser';
+import GeoJsonParser from "geostyler-geojson-parser";
+import SldStyleParser from "geostyler-sld-parser";
+import MapboxStyleParser from "geostyler-mapbox-parser";
+import ShapefileParser from "geostyler-shapefile-parser";
+import WfsParser from "geostyler-wfs-parser";
+import LyrxParser from "geostyler-lyrx-parser";
 
 import {
   CodeEditor,
@@ -31,41 +22,42 @@ import {
   PreviewMap,
   GeoStylerContext,
   CardStyle,
-  GeoStylerLocale
-} from 'geostyler';
+  GeoStylerLocale,
+} from "geostyler";
 
-import logo from './assets/logo.svg';
-import './App.less';
-import ExamplesDialog from './ExamplesDialog';
-import LegendRenderer from 'geostyler-legend/dist/LegendRenderer/LegendRenderer';
-import OlMap from 'ol/Map';
-import OlView from 'ol/View';
-import OlLayerTile from 'ol/layer/Tile';
-import OlSourceTileWMS from 'ol/source/TileWMS';
-import { fromLonLat } from 'ol/proj';
-import { LanguageSwitcher } from './LanguageSwitcher';
-import QGISStyleParser from 'geostyler-qgis-parser';
-import { GeoStylerContextInterface } from 'geostyler/dist/context/GeoStylerContext/GeoStylerContext';
+import logo from "./assets/logo.svg";
+import "./App.less";
+import ExamplesDialog from "./ExamplesDialog";
+import LegendRenderer from "geostyler-legend/dist/LegendRenderer/LegendRenderer";
+import OlMap from "ol/Map";
+import OlView from "ol/View";
+import OlLayerTile from "ol/layer/Tile";
+import OlSourceTileWMS from "ol/source/TileWMS";
+import { fromLonLat } from "ol/proj";
+import { LanguageSwitcher } from "./LanguageSwitcher";
+import QGISStyleParser from "geostyler-qgis-parser";
+import { GeoStylerContextInterface } from "geostyler/dist/context/GeoStylerContext/GeoStylerContext";
 
 const sldStyleParser = new SldStyleParser({
   builderOptions: {
-    format: true
-  }
+    format: true,
+  },
 });
 const sldStyleParserSE = new SldStyleParser({
-  sldVersion: '1.1.0',
+  sldVersion: "1.1.0",
   builderOptions: {
-    format: true
-  }
+    format: true,
+  },
 });
-sldStyleParserSE.title = 'SLD 1.1.0 - Symbology Encoding';
+sldStyleParserSE.title = "SLD 1.1.0 - Symbology Encoding";
 const mapBoxStyleParser = new MapboxStyleParser({
-  pretty: true
+  pretty: true,
 });
 const qgisParser = new QGISStyleParser();
 const geoJsonParser = new GeoJsonParser();
 const shapefileParser = new ShapefileParser();
 const wfsParser = new WfsParser();
+const lyrxParser = new LyrxParser();
 
 export interface AppLocale {
   codeEditor: string;
@@ -80,89 +72,102 @@ export interface AppLocale {
   previewMapDataProjection: string;
 }
 
-const iconLibraries = [{
-  name: 'Traffic',
-  icons: [{
-    src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Parking_icon.svg/128px-Parking_icon.svg.png',
-    caption: 'Parking'
-  }, {
-    src: 'https://upload.wikimedia.org/wikipedia/commons/a/ac/RWB-RWBA_Autobahn.svg',
-    caption: 'Highway'
-  }]
-}, {
-  name: 'GeoStyler',
-  icons: [{
-    src: 'https://raw.githubusercontent.com/geostyler/geostyler/master/public/logo.svg',
-    caption: 'GeoStyler Logo'
-  }]
-}];
+const iconLibraries = [
+  {
+    name: "Traffic",
+    icons: [
+      {
+        src: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Parking_icon.svg/128px-Parking_icon.svg.png",
+        caption: "Parking",
+      },
+      {
+        src: "https://upload.wikimedia.org/wikipedia/commons/a/ac/RWB-RWBA_Autobahn.svg",
+        caption: "Highway",
+      },
+    ],
+  },
+  {
+    name: "GeoStyler",
+    icons: [
+      {
+        src: "https://raw.githubusercontent.com/geostyler/geostyler/master/public/logo.svg",
+        caption: "GeoStyler Logo",
+      },
+    ],
+  },
+];
 
 export const App: React.FC = () => {
-
   const [locale, setLocale] = useState<GeoStylerLocale>(GsLocale.en_US);
   const [appLocale, setAppLocale] = useState<AppLocale>({
-    codeEditor: 'Code Editor',
-    cardLayout: 'CardLayout (Beta)',
-    examples: 'Examples',
-    graphicalEditor: 'Graphical Editor',
-    language: 'Language',
-    legend: 'Legend',
-    splitView: 'Split View',
-    previewMap: 'Preview Map',
-    loadedSuccess: 'Loaded successfully!',
-    previewMapDataProjection: 'The sample data is expected in the projection EPSG:4326.'
+    codeEditor: "Code Editor",
+    cardLayout: "CardLayout (Beta)",
+    examples: "Examples",
+    graphicalEditor: "Graphical Editor",
+    language: "Language",
+    legend: "Legend",
+    splitView: "Split View",
+    previewMap: "Preview Map",
+    loadedSuccess: "Loaded successfully!",
+    previewMapDataProjection:
+      "The sample data is expected in the projection EPSG:4326.",
   });
   const [cardLayout, setCardLayout] = useState<boolean>(false);
   const [data, setData] = useState<GsData>();
-  const [ruleRendererType, setRuleRendererType] = useState<'SLD' | 'OpenLayers'>('OpenLayers');
-  const [styleDisplayMode, setStyleDisplayMode] = useState<'Map' | 'Code' | 'Split' | 'Legend'>('Split');
+  const [ruleRendererType, setRuleRendererType] = useState<
+    "SLD" | "OpenLayers"
+  >("OpenLayers");
+  const [styleDisplayMode, setStyleDisplayMode] = useState<
+    "Map" | "Code" | "Split" | "Legend"
+  >("Split");
   const [style, setStyle] = useState<GsStyle>({
-    name: 'GeoStyler Demo',
+    name: "GeoStyler Demo",
     rules: [
       {
-        name: 'Rule 1',
+        name: "Rule 1",
         symbolizers: [
           {
-            kind: 'Line',
-            color: '#ff0000',
-            width: 5
-          }
-        ]
-      }
-    ]
+            kind: "Line",
+            color: "#ff0000",
+            width: 5,
+          },
+        ],
+      },
+    ],
   });
-  const [examplesModalVisible, setExamplesModalVisibile] = useState<boolean>(false);
+  const [examplesModalVisible, setExamplesModalVisibile] =
+    useState<boolean>(false);
 
   const onRuleRendererChange = (e: any) => {
     setRuleRendererType(e.target.value);
-  }
+  };
 
   const onStyleModeChange = (e: any) => {
     setStyleDisplayMode(e.target.value);
-  }
+  };
 
   const onCardLayoutSwitchChange = (card: boolean) => {
     setCardLayout(card);
-  }
+  };
 
   const onExamplesButtonClicked = () => {
     setExamplesModalVisibile(!examplesModalVisible);
-  }
+  };
 
   const onExampleSelected = (exampleStyle?: GsStyle) => {
     if (exampleStyle) {
       setStyle(exampleStyle);
     }
     setExamplesModalVisibile(false);
-  }
+  };
 
   const legendRenderer = new LegendRenderer({
     maxColumnWidth: 300,
     maxColumnHeight: 300,
-    overflow: 'auto',
+    overflow: "auto",
     styles: [structuredClone(style)],
     size: [600, 300],
-    hideRect: true
+    hideRect: true,
   });
   const legendEl = document.getElementById("legend");
   if (legendEl) {
@@ -173,35 +178,35 @@ export const App: React.FC = () => {
     layers: [
       new OlLayerTile({
         source: new OlSourceTileWMS({
-          url: 'https://sgx.geodatenzentrum.de/wms_topplus_open',
+          url: "https://sgx.geodatenzentrum.de/wms_topplus_open",
           params: {
-            'LAYERS': 'web_light_grau'
-          }
-        })
-      })
+            LAYERS: "web_light_grau",
+          },
+        }),
+      }),
     ],
-    target: 'map',
+    target: "map",
     view: new OlView({
       center: fromLonLat([-122.416667, 37.783333]),
-      zoom: 12
+      zoom: 12,
     }),
   });
 
   const ctx: GeoStylerContextInterface = {
     composition: {
       IconEditor: {
-        iconLibraries
+        iconLibraries,
       },
       Renderer: {
-        rendererType: ruleRendererType
+        rendererType: ruleRendererType,
       },
       SLDRenderer: {
-        wmsBaseUrl: 'https://ows-demo.terrestris.de/geoserver/ows?',
-        layer: 'terrestris:bundeslaender'
-      }
+        wmsBaseUrl: "https://ows-demo.terrestris.de/geoserver/ows?",
+        layer: "terrestris:bundeslaender",
+      },
     },
     data,
-    locale
+    locale,
   };
 
   return (
@@ -216,10 +221,12 @@ export const App: React.FC = () => {
         <div className="gs-settings">
           <Form layout="inline">
             <Form.Item label={appLocale.language}>
-              <LanguageSwitcher onChange={(newAppLocale, newLocale) => {
-                setAppLocale(newAppLocale);
-                setLocale(newLocale);
-              }} />
+              <LanguageSwitcher
+                onChange={(newAppLocale, newLocale) => {
+                  setAppLocale(newAppLocale);
+                  setLocale(newLocale);
+                }}
+              />
             </Form.Item>
             <Form.Item label={appLocale.cardLayout}>
               <Switch
@@ -243,11 +250,12 @@ export const App: React.FC = () => {
                   mapBoxStyleParser,
                   qgisParser,
                   sldStyleParser,
-                  sldStyleParserSE
+                  sldStyleParserSE,
+                  lyrxParser,
                 ]}
                 onStyleRead={(newStyle: GsStyle) => {
                   notification.success({
-                    message: appLocale.loadedSuccess
+                    message: appLocale.loadedSuccess,
                   });
                   setStyle(newStyle);
                 }}
@@ -255,28 +263,22 @@ export const App: React.FC = () => {
             </Form.Item>
             <Form.Item>
               <DataLoader
-                parsers={[
-                  geoJsonParser,
-                  wfsParser,
-                  shapefileParser
-                ]}
+                parsers={[geoJsonParser, wfsParser, shapefileParser]}
                 onDataRead={(newData: GsData) => {
                   notification.success({
-                    message: appLocale.loadedSuccess
+                    message: appLocale.loadedSuccess,
                   });
                   setData(newData);
                 }}
                 uploadButtonProps={{
                   onRemove: () => {
                     setData(undefined);
-                  }
+                  },
                 }}
               />
             </Form.Item>
             <Form.Item>
-              <Button
-                onClick={onExamplesButtonClicked}
-              >
+              <Button onClick={onExamplesButtonClicked}>
                 {appLocale.examples}
               </Button>
             </Form.Item>
@@ -285,19 +287,13 @@ export const App: React.FC = () => {
         <div className="left-wrapper">
           <h2>{appLocale.graphicalEditor}</h2>
           {cardLayout ? (
-            <CardStyle
-              style={style}
-              onStyleChange={setStyle}
-            />
+            <CardStyle style={style} onStyleChange={setStyle} />
           ) : (
-            <Style
-              style={style}
-              onStyleChange={setStyle}
-            />
+            <Style style={style} onStyleChange={setStyle} />
           )}
         </div>
         <div className="right-wrapper">
-          <Form layout="inline" className='display-radio'>
+          <Form layout="inline" className="display-radio">
             <Form.Item label="Display">
               <Radio.Group
                 className="renderer-select"
@@ -312,14 +308,19 @@ export const App: React.FC = () => {
             </Form.Item>
           </Form>
           <div className="code-display-container">
-            <div hidden={styleDisplayMode !== 'Code' && styleDisplayMode !== 'Split'}>
+            <div
+              hidden={
+                styleDisplayMode !== "Code" && styleDisplayMode !== "Split"
+              }
+            >
               <CodeEditor
                 style={style}
                 parsers={[
                   mapBoxStyleParser,
                   qgisParser,
                   sldStyleParser,
-                  sldStyleParserSE
+                  sldStyleParserSE,
+                  lyrxParser,
                 ]}
                 defaultParser={sldStyleParser}
                 onStyleChange={setStyle}
@@ -327,15 +328,24 @@ export const App: React.FC = () => {
                 showCopyButton={true}
               />
             </div>
-            <div hidden={styleDisplayMode !== 'Map' && styleDisplayMode !== 'Split'}>
-              <p className='preview-map-info'>{appLocale.previewMapDataProjection}</p>
+            <div
+              hidden={
+                styleDisplayMode !== "Map" && styleDisplayMode !== "Split"
+              }
+            >
+              <p className="preview-map-info">
+                {appLocale.previewMapDataProjection}
+              </p>
               <PreviewMap
                 style={structuredClone(style)}
                 map={map}
                 mapHeight="100%"
               />
             </div>
-            <div className='legend-wrapper' hidden={styleDisplayMode !== 'Legend'}>
+            <div
+              className="legend-wrapper"
+              hidden={styleDisplayMode !== "Legend"}
+            >
               <h2>{appLocale.legend}</h2>
               <div id="legend"></div>
             </div>
@@ -348,22 +358,21 @@ export const App: React.FC = () => {
         />
         <footer className="gs-footer">
           <span className="center-footer">
-            <a href="https://www.terrestris.de/en/impressum/">
-              Imprint
-            </a>
-            —
+            <a href="https://www.terrestris.de/en/impressum/">Imprint</a>—
             <a href="https://www.terrestris.de/en/datenschutzerklaerung">
               Privacy Policy
             </a>
             —
-            <a href={`https://github.com/geostyler/geostyler/releases/tag/v${process.env.GEOSTYLER_VERSION}`}>
+            <a
+              href={`https://github.com/geostyler/geostyler/releases/tag/v${process.env.GEOSTYLER_VERSION}`}
+            >
               GeoStyler v{process.env.GEOSTYLER_VERSION}
             </a>
           </span>
         </footer>
       </div>
-    </GeoStylerContext.Provider >
+    </GeoStylerContext.Provider>
   );
-}
+};
 
 export default App;
