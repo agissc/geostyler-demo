@@ -1,50 +1,42 @@
+/* App.less */
+
 .app {
   display: flex;
-  flex-direction: column;
   height: 100vh;
 }
 
 .split-view-container {
   display: flex;
-  flex-direction: row;
   flex: 1;
+  overflow: hidden;
 }
 
-.code-editor-section,
-.map-section,
-.legend-section {
+.code-editor-section {
+  display: flex;
+  flex-direction: column;
+  min-width: 200px;
+  width: 400px;
+  border-right: 2px solid #ccc;
+  resize: horizontal;
+  overflow: auto;
+}
+
+.map-section {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 300px;
+}
+
+.legend-section {
   display: flex;
   flex-direction: column;
 }
 
-.code-editor-section {
-  width: 33%;
-  border-right: 1px solid #ddd;
-}
-
-.map-section {
-  width: 34%;
-  border-right: 1px solid #ddd;
-  position: relative;
-}
-
-.legend-section {
-  width: 33%;
-  padding: 10px;
-  overflow-y: auto;
-}
-
-#map {
-  height: 100%;
-  width: 100%;
-  position: relative;
-}
-
-.preview-map-info {
-  margin: 0;
-  padding: 10px;
-  background: #fff;
-  border-bottom: 1px solid #ddd;
+.resizer {
+  width: 5px;
+  cursor: ew-resize;
+  background-color: #000;
+  opacity: 0.2;
   z-index: 1;
 }
